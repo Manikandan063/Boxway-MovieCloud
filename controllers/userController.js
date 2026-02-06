@@ -15,13 +15,7 @@ const registerUser = async (req, res) => {
         }
 
         const user = await User.create({
-            name,
-            email,
-            password,
-            role,
-            contactInfo,
-            salaryDetails,
-            joiningDate,
+            ...req.body
         });
 
         if (user) {
@@ -65,6 +59,15 @@ const updateUser = async (req, res) => {
             user.contactInfo = req.body.contactInfo || user.contactInfo;
             user.salaryDetails = req.body.salaryDetails || user.salaryDetails;
             user.isActive = req.body.isActive !== undefined ? req.body.isActive : user.isActive;
+
+            // New fields
+            user.designation = req.body.designation || user.designation;
+            user.gender = req.body.gender || user.gender;
+            user.dob = req.body.dob || user.dob;
+            user.qualification = req.body.qualification || user.qualification;
+            user.bankDetails = req.body.bankDetails || user.bankDetails;
+            user.emergencyContact = req.body.emergencyContact || user.emergencyContact;
+
             if (req.body.password) {
                 user.password = req.body.password;
             }

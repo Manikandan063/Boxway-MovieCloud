@@ -19,13 +19,13 @@ const projectSchema = new mongoose.Schema({
     }],
     currentPhase: {
         type: String,
-        enum: ['Concept Design', '3D Visualization', 'Approval Drawings', 'Working Drawings', 'Site Execution', 'Completion'],
+        enum: ['Concept Design', 'Design Stage', '3D Visualization', 'Approval Drawings', 'Working Drawings', 'Site Execution', 'Completion'],
         default: 'Concept Design',
     },
     phases: [{
         name: {
             type: String,
-            enum: ['Concept Design', '3D Visualization', 'Approval Drawings', 'Working Drawings', 'Site Execution', 'Completion'],
+            enum: ['Concept Design', 'Design Stage', '3D Visualization', 'Approval Drawings', 'Working Drawings', 'Site Execution', 'Completion'],
         },
         status: {
             type: String,

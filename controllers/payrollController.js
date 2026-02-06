@@ -6,24 +6,47 @@ const { successResponse, errorResponse } = require('../utils/responseHandler');
 // @route   POST /api/payroll/calculate
 // @access  Private/Admin/Accountant
 const calculatePayroll = async (req, res) => {
-    const { staffId, month, attendanceDays, allowances } = req.body;
+    const { staffId, month, attendanceDays, allowances, bonuses, deductions, totalDays } = req.body;
 
     try {
+        // Check if payroll already exists for this staff and month
+        const existingPayroll = await Payroll.findOne({ staff: staffId, month });
+        if (existingPayroll) {
+            return errorResponse(res, 'Payroll for this month already exists for this staff member', 400);
+        }
+
         const user = await User.findById(staffId);
         if (!user) {
             return errorResponse(res, 'Staff member not found', 404);
         }
 
-        const dailySalary = (user.salaryDetails.basicSalary || 0) / 30; // Assuming 30 days
-        const calculatedSalary = (dailySalary * attendanceDays) + (Number(allowances) || user.salaryDetails.allowances || 0);
+        const salaryDetails = user.salaryDetails || {};
+        const basicSalary = salaryDetails.basicSalary || 0;
+        const storedAllowances = salaryDetails.allowances || 0;
+
+        const currentTotalDays = Number(totalDays) || 30; // Default to 30
+        const dailySalary = basicSalary / currentTotalDays;
+        const baseEarnings = dailySalary * attendanceDays;
+
+        const finalAllowances = Number(allowances) || storedAllowances;
+        const finalBonuses = Number(bonuses) || 0;
+        const finalDeductions = Number(deductions) || 0;
+
+        // Calculate Net Salary
+        const grossEarnings = baseEarnings + finalAllowances + finalBonuses;
+        const netSalary = grossEarnings - finalDeductions;
 
         const payroll = await Payroll.create({
             staff: staffId,
             month,
             attendanceDays,
-            basicSalary: user.salaryDetails.basicSalary,
-            allowances: Number(allowances) || user.salaryDetails.allowances,
-            totalCalculatedSalary: Math.round(calculatedSalary),
+            totalDays: currentTotalDays,
+            basicSalary,
+            allowances: finalAllowances,
+            bonuses: finalBonuses,
+            deductions: finalDeductions,
+            netSalary: Math.round(netSalary),
+            totalCalculatedSalary: Math.round(netSalary), // Keeping for backward compatibility
             status: 'Pending',
         });
 
@@ -83,7 +106,19 @@ const getMyPayroll = async (req, res) => {
 // @access  Private/Admin/Accountant
 const createPayroll = async (req, res) => {
     try {
-        const payroll = await Payroll.create(req.body);
+        const { staff, staffId, month } = req.body;
+        const finalStaff = staff || staffId;
+
+        // Check for duplicate
+        const existingPayroll = await Payroll.findOne({ staff: finalStaff, month });
+        if (existingPayroll) {
+            return errorResponse(res, 'Payroll for this month already exists for this staff member', 400);
+        }
+
+        const payroll = await Payroll.create({
+            ...req.body,
+            staff: finalStaff
+        });
         return successResponse(res, payroll, 'Payroll record created manually', 201);
     } catch (error) {
         return errorResponse(res, error.message, 500, error);

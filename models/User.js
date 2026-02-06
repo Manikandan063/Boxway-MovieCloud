@@ -17,12 +17,39 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['Admin', 'Architect', 'HR', 'Accountant', 'Intern'],
+        enum: ['Admin', 'Architect', 'HR', 'Accountant', 'Intern', 'Manager'],
         default: 'Intern',
     },
     contactInfo: {
         phone: String,
         address: String,
+    },
+    designation: {
+        type: String,
+        default: "",
+    },
+    gender: {
+        type: String,
+        enum: ['Male', 'Female', 'Other', ''],
+        default: "",
+    },
+    dob: {
+        type: Date,
+    },
+    qualification: {
+        type: String,
+        default: "",
+    },
+    bankDetails: {
+        accountName: String,
+        accountNumber: String,
+        bankName: String,
+        ifscCode: String,
+    },
+    emergencyContact: {
+        name: String,
+        relationship: String,
+        phone: String,
     },
     joiningDate: {
         type: Date,

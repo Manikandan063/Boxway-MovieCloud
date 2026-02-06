@@ -14,6 +14,7 @@ const settingsRoutes = require('./routes/settingsRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const invoiceRoutes = require('./routes/invoiceRoutes');
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/invoices', invoiceRoutes);
 
 // Root Route
 app.get('/', (req, res) => {

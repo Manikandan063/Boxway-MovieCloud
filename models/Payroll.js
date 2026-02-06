@@ -12,7 +12,6 @@ const payrollSchema = new mongoose.Schema({
     },
     basicSalary: {
         type: Number,
-        required: true,
     },
     allowances: {
         type: Number,
@@ -22,9 +21,12 @@ const payrollSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    totalDays: {
+        type: Number,
+        default: 30,
+    },
     totalCalculatedSalary: {
         type: Number,
-        required: true,
     },
     status: {
         type: String,
@@ -33,6 +35,17 @@ const payrollSchema = new mongoose.Schema({
     },
     paymentDate: {
         type: Date,
+    },
+    deductions: {
+        type: Number,
+        default: 0,
+    },
+    bonuses: {
+        type: Number,
+        default: 0,
+    },
+    netSalary: {
+        type: Number,
     },
 }, {
     timestamps: true,

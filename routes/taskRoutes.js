@@ -6,16 +6,16 @@ const { protect, authorize } = require('../middlewares/authMiddleware');
 router.use(protect);
 
 router.route('/')
-    .post(authorize('Admin', 'Architect'), createTask)
+    .post(authorize('Admin', 'Architect', 'Manager'), createTask)
     .get(getTasks);
 
 router.get('/my', getMyTasks);
 
 router.put('/:id/submit', submitDrawing);
-router.put('/:id/approve', authorize('Admin', 'Architect'), approveTask);
+router.put('/:id/approve', authorize('Admin', 'Architect', 'Manager'), approveTask);
 
 router.route('/:id')
     .put(updateTask) // Staff can update their own tasks (logic in controller)
-    .delete(authorize('Admin', 'Architect'), deleteTask);
+    .delete(authorize('Admin', 'Architect', 'Manager'), deleteTask);
 
 module.exports = router;

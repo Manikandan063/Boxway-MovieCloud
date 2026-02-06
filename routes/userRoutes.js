@@ -8,7 +8,7 @@ const { protect, authorize } = require('../middlewares/authMiddleware');
 
 // Allow Admin and HR to manage users
 router.post('/register', registerUser); // Removed authorize for temporary setup
-router.get('/', protect, authorize('Admin', 'HR'), getUsers);
+router.get('/', protect, authorize('Admin', 'HR', 'Manager'), getUsers);
 
 router.route('/:id')
     .put(protect, authorize('Admin', 'HR'), updateUser)
